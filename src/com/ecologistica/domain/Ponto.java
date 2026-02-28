@@ -1,4 +1,3 @@
 package com.ecologistica.domain;
 
-public class Ponto {
-}
+public record Ponto(double x, double y) {}
