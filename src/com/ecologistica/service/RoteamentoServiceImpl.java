@@ -83,6 +83,7 @@ public class RoteamentoServiceImpl implements RoteamentoService {
         veiculo.setStatus(StatusVeiculo.OCUPADO);
         rota.recalcularDistanciaTotal();
 
-        return rotaRepository.save(rota);
+        rotaRepository.save(rota);
+        return rota;
     }
 }
