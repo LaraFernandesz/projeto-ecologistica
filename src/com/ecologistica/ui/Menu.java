@@ -21,7 +21,7 @@ public class Menu {
         do {
 
             System.out.println("\n=== SISTEMA ECOLOGISTICA ===");
-            System.out.println("1. Gerar dados iniciais");
+            System.out.println("1. Gerar/Carregar dados iniciais");
             System.out.println("2. Listar entidades");
             System.out.println("3. Executar algoritmo de roteamento");
             System.out.println("4. Exibir relatórios e estatísticas");
