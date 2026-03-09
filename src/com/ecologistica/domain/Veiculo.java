@@ -24,14 +24,6 @@ public class Veiculo {
         return placa;
     }
 
-    public Ponto getPontoAtual() {
-        return pontoAtual;
-    }
-
-    public void setPontoAtual(Ponto pontoAtual) {
-        this.pontoAtual = pontoAtual;
-    }
-
     public StatusVeiculo getStatus() {
         return status;
     }

@@ -1,25 +1,15 @@
 package com.ecologistica.service;
 
-import com.ecologistica.domain.Deposito;
-import com.ecologistica.domain.Entrega;
-import com.ecologistica.domain.Ponto;
-import com.ecologistica.domain.Rota;
-import com.ecologistica.domain.Veiculo;
+import com.ecologistica.domain.*;
 import com.ecologistica.domain.enums.StatusEntrega;
 import com.ecologistica.domain.enums.StatusVeiculo;
-import com.ecologistica.exception.BusinessException;
-import com.ecologistica.exception.DepositoNaoEncontradoException;
-import com.ecologistica.exception.SemEntregasPendentesException;
-import com.ecologistica.exception.ValidationException;
-import com.ecologistica.exception.VeiculoNaoEncontradoException;
-import com.ecologistica.exception.VeiculoOcupadoException;
-import com.ecologistica.repository.DepositoRepository;
-import com.ecologistica.repository.EntregaRepository;
-import com.ecologistica.repository.RotaRepository;
-import com.ecologistica.repository.VeiculoRepository;
+import com.ecologistica.exception.*;
+import com.ecologistica.repository.*;
 
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.Deque;
+import java.util.LinkedList;
 import java.util.List;
 
 public class RoteamentoServiceImpl implements RoteamentoService {
@@ -62,27 +52,46 @@ public class RoteamentoServiceImpl implements RoteamentoService {
         }
 
         Rota rota = new Rota(System.currentTimeMillis(), deposito, veiculo);
-        List<Entrega> naoVisitadas = new ArrayList<>(entregasPendentes);
+        Deque<Entrega> filaPlanejada = new LinkedList<>(entregasPendentes);
 
         Ponto pontoAtual = deposito.getPonto();
+        double tempoAtual = 0.0;
 
-        while (!naoVisitadas.isEmpty()) {
+        while (!filaPlanejada.isEmpty()) {
             final Ponto refPonto = pontoAtual;
+            final double refTempo = tempoAtual;
 
-            Entrega maisProxima = naoVisitadas.stream()
-                    .min(Comparator.comparingDouble(e -> refPonto.distanceTo(e.getPonto())))
-                    .orElseThrow(() -> new ValidationException("Erro ao processar a próxima entrega."));
+            Entrega escolhida = filaPlanejada.stream()
+                    .filter(e -> e.getHorarioLimite() == null || (refTempo + refPonto.distanceTo(e.getPonto())) <= e.getHorarioLimite())
+                    .min(Comparator.comparingDouble(e -> {
+                        double distancia = refPonto.distanceTo(e.getPonto());
+                        if (e.getHorarioLimite() == null) {
+                            return distancia * 2;
+                        }
+                        double urgencia = e.getHorarioLimite() - (refTempo + distancia);
+                        return distancia + urgencia;
+                    }))
+                    .orElseThrow(() -> new RotaInviavelException("Matematicamente impossível visitar todos os pontos sem violar uma janela de tempo."));
 
-            rota.adicionarParada(maisProxima);
-            maisProxima.setStatus(StatusEntrega.EM_ROTA);
+            if (!filaPlanejada.getFirst().equals(escolhida)) {
+                filaPlanejada.remove(escolhida);
+                filaPlanejada.addFirst(escolhida);
+            }
 
-            pontoAtual = maisProxima.getPonto();
-            naoVisitadas.remove(maisProxima);
+            Entrega proxima = filaPlanejada.removeFirst();
+
+            double distanciaPercorrida = refPonto.distanceTo(proxima.getPonto());
+            tempoAtual += distanciaPercorrida;
+
+            rota.adicionarParada(proxima);
+            proxima.setStatus(StatusEntrega.EM_ROTA);
+            pontoAtual = proxima.getPonto();
         }
 
         veiculo.setStatus(StatusVeiculo.OCUPADO);
         rota.recalcularDistanciaTotal();
 
-        return rotaRepository.save(rota);
+        rotaRepository.save(rota);
+        return rota;
     }
 }

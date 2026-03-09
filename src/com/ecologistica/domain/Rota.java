@@ -48,22 +48,6 @@ public class Rota {
         return id;
     }
 
-    public Deposito getDeposito() {
-        return deposito;
-    }
-
-    public Veiculo getVeiculo() {
-        return veiculo;
-    }
-
-    public List<Entrega> getListaParadas() {
-        return listaParadas;
-    }
-
-    public double getDistanciaTotal() {
-        return distanciaTotal;
-    }
-
     @Override
     public String toString() {
         return "Rota{id=" + id +

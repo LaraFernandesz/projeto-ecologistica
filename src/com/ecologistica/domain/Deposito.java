@@ -26,18 +26,6 @@ public class Deposito {
         return ponto;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public void setNome(String nome) {
-        this.nome = nome;
-    }
-
-    public void setPonto(Ponto ponto) {
-        this.ponto = ponto;
-    }
-
     @Override
     public String toString() {
         return "Deposito{id=" + id +
