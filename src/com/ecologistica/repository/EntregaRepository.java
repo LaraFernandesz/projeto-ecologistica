@@ -1,6 +1,7 @@
 package com.ecologistica.repository;
 
 import com.ecologistica.domain.Entrega;
+import com.ecologistica.domain.enums.StatusEntrega;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -19,7 +20,6 @@ public class EntregaRepository {
         return new ArrayList<>(db.getEntregas().values());
     }
 
-    // Stream #1 (ordenado)
     public List<Entrega> findAllSortedById() {
         return db.getEntregas().values().stream()
                 .sorted(Comparator.comparing(Entrega::getId))
@@ -38,18 +38,17 @@ public class EntregaRepository {
         db.getEntregas().remove(id);
     }
 
-    // Stream #2
     public List<Entrega> findPendentes() {
         return db.getEntregas().values().stream()
                 .filter(e -> e.getStatus() != null)
-                .filter(e -> e.getStatus().equalsIgnoreCase("PENDENTE"))
+                .filter(e -> e.getStatus() == StatusEntrega.PENDENTE)
                 .collect(Collectors.toList());
     }
 
     public List<Entrega> findByStatus(String status) {
         return db.getEntregas().values().stream()
                 .filter(e -> e.getStatus() != null)
-                .filter(e -> e.getStatus().equalsIgnoreCase(status))
+                .filter(e -> e.getStatus().name().equalsIgnoreCase(status))
                 .collect(Collectors.toList());
     }
 }
