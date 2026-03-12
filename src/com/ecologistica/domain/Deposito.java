@@ -1,9 +1,12 @@
 package com.ecologistica.domain;
 
 public class Deposito {
+
     private Long id;
     private String nome;
     private Ponto ponto;
+
+    public Deposito() {}
 
     public Deposito(Long id, String nome, Ponto ponto) {
         this.id = id;
@@ -11,13 +14,23 @@ public class Deposito {
         this.ponto = ponto;
     }
 
-    // Getters e Setters
-    public Long getId() { return id; }
-    public String getNome() { return nome; }
-    public Ponto getPonto() { return ponto; }
+    public Long getId() {
+        return id;
+    }
+
+    public String getNome() {
+        return nome;
+    }
+
+    public Ponto getPonto() {
+        return ponto;
+    }
 
     @Override
     public String toString() {
-        return "Deposito [ID=" + id + ", Nome=" + nome + ", Ponto=" + ponto + "]";
+        return "Deposito{id=" + id +
+                ", nome='" + nome + '\'' +
+                ", ponto=" + ponto +
+                '}';
     }
 }

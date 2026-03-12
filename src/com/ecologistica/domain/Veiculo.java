@@ -1,23 +1,43 @@
 package com.ecologistica.domain;
 
+import com.ecologistica.domain.enums.StatusVeiculo;
+
 public class Veiculo {
+
     private Long id;
     private String placa;
     private Ponto pontoAtual;
-    private String status; // Ex: "LIVRE", "OCUPADO"
+    private StatusVeiculo status;
 
     public Veiculo(Long id, String placa, Ponto pontoAtual) {
         this.id = id;
         this.placa = placa;
         this.pontoAtual = pontoAtual;
-        this.status = "LIVRE";
+        this.status = StatusVeiculo.LIVRE;
     }
 
-    // Getters e Setters
-    public Long getId() { return id; }
-    public String getPlaca() { return placa; }
-    public Ponto getPontoAtual() { return pontoAtual; }
-    public void setPontoAtual(Ponto pontoAtual) { this.pontoAtual = pontoAtual; }
-    public String getStatus() { return status; }
-    public void setStatus(String status) { this.status = status; }
+    public Long getId() {
+        return id;
+    }
+
+    public String getPlaca() {
+        return placa;
+    }
+
+    public StatusVeiculo getStatus() {
+        return status;
+    }
+
+    public void setStatus(StatusVeiculo status) {
+        this.status = status;
+    }
+
+    @Override
+    public String toString() {
+        return "Veiculo{id=" + id +
+                ", placa='" + placa + '\'' +
+                ", pontoAtual=" + pontoAtual +
+                ", status=" + status +
+                '}';
+    }
 }

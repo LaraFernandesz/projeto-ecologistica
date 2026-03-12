@@ -4,22 +4,57 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Rota {
+
     private Long id;
-    private List<Entrega> paradas;
+    private Deposito deposito;
+    private Veiculo veiculo;
+    private List<Entrega> listaParadas;
     private double distanciaTotal;
 
-    public Rota(Long id) {
+    public Rota(Long id, Deposito deposito, Veiculo veiculo) {
         this.id = id;
-        this.paradas = new ArrayList<>();
+        this.deposito = deposito;
+        this.veiculo = veiculo;
+        this.listaParadas = new ArrayList<>();
         this.distanciaTotal = 0.0;
     }
 
     public void adicionarParada(Entrega entrega) {
-        this.paradas.add(entrega);
+        this.listaParadas.add(entrega);
     }
 
-    public Long getId() { return id; }
-    public List<Entrega> getParadas() { return paradas; }
-    public double getDistanciaTotal() { return distanciaTotal; }
-    public void setDistanciaTotal(double distanciaTotal) { this.distanciaTotal = distanciaTotal; }
+    public void recalcularDistanciaTotal() {
+
+        if (listaParadas.isEmpty()) {
+            distanciaTotal = 0;
+            return;
+        }
+
+        double distancia = 0;
+
+        Ponto pontoAtual = deposito.getPonto();
+
+        for (Entrega entrega : listaParadas) {
+            distancia += pontoAtual.distanceTo(entrega.getPonto());
+            pontoAtual = entrega.getPonto();
+        }
+
+        distancia += pontoAtual.distanceTo(deposito.getPonto());
+
+        this.distanciaTotal = distancia;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    @Override
+    public String toString() {
+        return "Rota{id=" + id +
+                ", deposito=" + deposito.getNome() +
+                ", veiculo=" + veiculo.getPlaca() +
+                ", paradas=" + listaParadas.size() +
+                ", distanciaTotal=" + distanciaTotal +
+                '}';
+    }
 }
